@@ -49,15 +49,22 @@ int main()
     }
     
     // starting the game
+    int numberOfAttemptsToStartGame = 0;
     char userChar1 = ' ', userChar2 = ' ';
-    while(userChar1 != 'o' && userChar1 != 'O' && userChar1 != 'X' && userChar1 != 'x'){
+    while(userChar1 != 'o' && userChar1 != 'O' && userChar1 != 'X' && userChar1 != 'x' && numberOfAttemptsToStartGame < 10){
         cout << " which char u want to choose: (O or X) ?" << endl;
         cin >> userChar1;
         if(userChar1 == 'O' || userChar1 == 'o') userChar2 = 'X';
         else if(userChar1 == 'X' || userChar1 == 'x') userChar2 = 'O';
-        else cout << "Chosen wrong char, choose again....." << endl;
+        else {
+            cout << "Chosen wrong char, choose again....." << endl;
+            numberOfAttemptsToStartGame++;
+        }
     }
-    
+    if(numberOfAttemptsToStartGame == 10) {
+        cout << "Too many wrong attempts for the char... \nStopping the game............";
+        return 0;
+    }
     // main algo
     bool win = false;
     int win1, win2;
