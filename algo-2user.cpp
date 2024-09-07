@@ -50,7 +50,7 @@ int main()
     
     // starting the game
     char userChar1 = ' ', userChar2 = ' ';
-    while(userChar1 == ' '){
+    while(userChar1 != 'o' && userChar1 != 'O' && userChar1 != 'X' && userChar1 != 'x'){
         cout << " which char u want to choose: (O or X) ?" << endl;
         cin >> userChar1;
         if(userChar1 == 'O' || userChar1 == 'o') userChar2 = 'X';
