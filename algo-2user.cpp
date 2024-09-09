@@ -2,26 +2,41 @@
 
 using namespace std;
 
-int isSame(int r, int c, char card[3][3], char v) {
-    if(r<0) return 0;
-    if(r>2) return 0;
-    if(c<0) return 0;
-    if(c>2) return 0;
-    if(card[r][c] == v) return 1;
-    return 0;
+bool areSame(int r, int c, char card[3][3], char v) {
+    if(r<0) return false;
+    if(r>2) return false;
+    if(c<0) return false;
+    if(c>2) return false;
+    if(card[r][c] == v) return true;
+    return false;
 }
-int didWin(int r, int c, char card[3][3], char v) {
-    int win = 0;
-    win += isSame(r-1,c,card,v);
-    win += isSame(r+1,c,card,v);
-    win += isSame(r,c-1,card,v);
-    win += isSame(r,c+1,card,v);
-    win += isSame(r-1,c+1,card,v);
-    win += isSame(r+1,c-1,card,v);
-    win += isSame(r+1,c+1,card,v);
-    win += isSame(r-1,c-1,card,v);
-    return win;
+
+bool isWin(int r, int c, char card[3][3], char v) {
+    if(r == 0) {
+        if(areSame(r+1,c,card,v) && areSame(r+2,c,card,v)) return true; 
+        else if(c == 0 && areSame(r,c+1,card,v) && areSame(r,c+2,card,v)) return true;
+        else if(c == 1 && areSame(r,c-1,card,v) && areSame(r,c+1,card,v)) return true;
+        else if(c == 0 && areSame(r+1,c+1,card,v) && areSame(r+2,c+2,card,v)) return true; 
+        else if(c == 2 && areSame(r,c-1,card,v) && areSame(r,c-2,card,v)) return true;
+        else if(c == 2 && areSame(r+1,c-1,card,v) && areSame(r+2,c-2,card,v)) return true;
+    }else if(r == 1) {
+        if(areSame(r-1,c,card,v) && areSame(r+1,c,card,v)) return true;
+        else if(c == 0 && areSame(r,c+1,card,v) && areSame(r,c+2,card,v)) return true;
+        else if(c == 1 && areSame(r,c+1,card,v) && areSame(r, c-1, card, v)) return true;
+        else if(c == 1 && areSame(r-1,c-1,card,v) && areSame(r+1,c+1,card,v)) return true;
+        else if(c == 1 && areSame(r+1,c-1,card,v) && areSame(r-1,c+1,card,v)) return true;
+        else if(c == 2 && areSame(r,c-1,card,v) && areSame(r,c-2,card,v)) return true;
+    }else if(r == 2) {
+        if(areSame(r-1,c,card,v) && areSame(r-2,c,card,v)) return true;
+        else if(c == 0 && areSame(r,c+1,card,v) && areSame(r,c+2,card,v)) return true;
+        else if(c == 0 && areSame(r-1,c+1,card,v) && areSame(r-2,c+2,card,v)) return true;
+        else if(c == 1 && areSame(r,c-1,card,v) && areSame(r,c+1,card,v)) return true;
+        else if(c == 2 && areSame(r,c-1,card,v) && areSame(r,c-2,card,v)) return true;
+        else if(c == 2 && areSame(r-1,c-1,card,v) && areSame(r-2,c-2,card,v)) return true;
+    }
+    return false;
 }
+
 
 void printStatus(char card[3][3]) {
     for(int i=0; i<3; i++) {
@@ -45,13 +60,15 @@ int main()
     char card[3][3];
     // setting all the locations as ' '
     for(int i=0; i<3; i++) {
-        for(int j=0; j<3; j++) card[i][j] = ' ';
+        for(int j=0; j<3; j++) {
+            card[i][j] = ' ';
+        }
     }
     
     // starting the game
     int numberOfAttemptsToStartGame = 0;
     char userChar1 = ' ', userChar2 = ' ';
-    while(userChar1 != 'o' && userChar1 != 'O' && userChar1 != 'X' && userChar1 != 'x' && numberOfAttemptsToStartGame < 10){
+    while(userChar1 != 'o' && userChar1 != 'O' && userChar1 != 'X' && userChar1 != 'x' && numberOfAttemptsToStartGame < 2){
         cout << " which char u want to choose: (O or X) ?" << endl;
         cin >> userChar1;
         if(userChar1 == 'O' || userChar1 == 'o') userChar2 = 'X';
@@ -61,14 +78,12 @@ int main()
             numberOfAttemptsToStartGame++;
         }
     }
-    if(numberOfAttemptsToStartGame == 10) {
+    if(numberOfAttemptsToStartGame == 2) {
         cout << "Too many wrong attempts for the char... \nStopping the game............";
         return 0;
     }
     // main algo
     bool win = false;
-    int win1, win2;
-    win1 = win2 = 0;
     char winner;
     // userChar1 will start and then userChar2
     int userNum=1;
@@ -88,13 +103,11 @@ int main()
                 rightPlace = true;
                 if(userNum == 1) {
                     card[i1][j1] = userChar1;
-                    win1 += didWin(i1, j1, card, userChar1);
-                    cout << win1 << " ---- current status for user1 ----" << endl;
+                    win = isWin(i1, j1, card, userChar1);
                     userNum = 2;
                 }else {
                     card[i1][j1] = userChar2;
-                    win2 += didWin(i1, j1, card, userChar2);
-                    cout << win2 << " ---- current status for user2 ----" << endl;
+                    win = isWin(i1, j1, card, userChar2);
                     userNum = 1;
                 }
             }
@@ -104,17 +117,14 @@ int main()
         cout << endl << endl << "current status....." << endl;
         printStatus(card);
         
-        // giving win status
-        if(win1 == 2) {
-            cout << endl << userChar1 << " is the Winner!!";
-            win = true;
-        }
-        else if(win2 == 2) {
-            cout << endl << userChar2 << " is the Winner!!";
-            win = true;
-        }
-        else{
-            if(isAllFilled(card)) cout << endl << "Its a Draw!!";
+        if(win) {
+            if(userNum == 2) cout << endl << userChar1 << " is the Winner!!";
+            else if(userNum == 1) cout << endl << userChar2 << " is the Winner!!";
+        } else {
+            if(isAllFilled(card)) {
+                cout << endl << "Its a Draw!!";
+                break;
+            }
         }
     }
     return 0;
